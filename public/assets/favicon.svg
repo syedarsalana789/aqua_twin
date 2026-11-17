@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e648b"/>
+      <stop offset="60%" stop-color="#12749e"/>
+      <stop offset="100%" stop-color="#1685b0"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded Background -->
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <!-- Water Wave Detail -->
+  <path d="M0 44 C 18 38, 28 50, 44 42 C 54 37, 59 40, 64 42 L 64 64 L 0 64 Z" fill="url(#wave)"/>
+  <!-- Stylized Letter 'A' + Water Droplet Peak -->
+  <path d="M 32 12 L 47 48 L 39 48 L 35 38 L 29 38 L 25 48 L 17 48 Z M 32 23 L 30 32 L 34 32 Z" fill="#ffffff"/>
+  <!-- Droplet Accent -->
+  <circle cx="32" cy="18" r="3" fill="#69d2f0"/>
+</svg>

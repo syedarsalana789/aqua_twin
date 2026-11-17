@@ -1,0 +1,12 @@
+Station,Date,Stage,Precip,Discharge_cusecs,Water_Temp_C,Agency,Status
+Sukkur,Nov 8 2026 08:00 AM,5.45m,16.5mm,185400,22.4,WAPDA Telemetry,Verified
+Guddu,Nov 8 2026 08:30 AM,4.20m,9.0mm,210000,21.8,WAPDA Telemetry,Verified
+Hub,Nov 8 2026 09:00 AM,2.85m,31.2mm,4500,23.1,Provincial Disaster Mgmt,Active
+Karachi,Nov 8 2026 09:30 AM,1.90m,48.0mm,12000,24.5,Urban Flood Monitoring,Active
+Sukkur,Nov 8 2026 02:00 PM,5.90m,22.0mm,192000,23.0,WAPDA Telemetry,Verified
+Guddu,Nov 8 2026 02:30 PM,4.65m,15.5mm,215000,22.1,WAPDA Telemetry,Verified
+Hub,Nov 8 2026 03:00 PM,3.10m,18.4mm,5800,23.5,Provincial Disaster Mgmt,Active
+Karachi,Nov 8 2026 03:30 PM,2.20m,27.5mm,9500,25.0,Urban Flood Monitoring,Active
+Sukkur,Nov 8 2026 07:00 PM,6.25m,5.0mm,198000,21.9,WAPDA Telemetry,Verified
+Guddu,Nov 8 2026 07:30 PM,4.95m,3.0mm,218000,21.5,WAPDA Telemetry,Verified
+

@@ -1,0 +1,12 @@
+station_name,observed_at,water_level_m,rainfall_mm,source
+Indus River — Sukkur,2026-11-08 06:00:00,4.35,12.5,Sindh Irrigation Dept
+Indus River — Guddu,2026-11-08 06:30:00,3.90,8.0,Sindh Irrigation Dept
+Hub River,2026-11-08 07:00:00,2.15,24.0,Hub Dam Telemetry Station
+Karachi Urban Catchment,2026-11-08 07:15:00,1.20,35.4,KMC Drainage Unit
+Indus River — Sukkur,2026-11-08 12:00:00,4.80,18.2,Sindh Irrigation Dept
+Indus River — Guddu,2026-11-08 12:30:00,4.10,14.0,Sindh Irrigation Dept
+Hub River,2026-11-08 13:00:00,2.60,42.5,Hub Dam Telemetry Station
+Karachi Urban Catchment,2026-11-08 13:30:00,1.85,55.0,KMC Drainage Unit
+Indus River — Sukkur,2026-11-08 18:00:00,5.10,6.0,Sindh Irrigation Dept
+Indus River — Guddu,2026-11-08 18:30:00,4.40,4.5,Sindh Irrigation Dept
+

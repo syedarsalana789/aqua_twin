@@ -1,0 +1,3 @@
+station_name,observed_at,water_level_m,rainfall_mm,source
+Indus River - Sukkur,2026-11-06 08:00:00,4.25,2.5,Example gauge source
+Indus River - Guddu,2026-11-06 09:00:00,3.80,1.2,Manual reading

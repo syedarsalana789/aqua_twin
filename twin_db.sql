@@ -1,0 +1,1124 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Nov 17, 2026 at 07:02 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `twin_db`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `alerts`
+--
+
+CREATE TABLE `alerts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(180) NOT NULL,
+  `severity` enum('Information','Watch','Warning','Critical') NOT NULL,
+  `message` text NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `alerts`
+--
+
+INSERT INTO `alerts` (`id`, `title`, `severity`, `message`, `is_active`, `created_by`, `created_at`) VALUES
+(1, 'Demo environment', 'Information', 'This is a demonstration notice. It is not an official weather or flood warning.', 1, NULL, '2026-11-08 14:29:05'),
+(2, 'Monsoon Advisory Test', 'Watch', 'River flows are currently within normal baseline levels.', 1, 1, '2026-11-08 15:56:28'),
+(3, 'test notice', 'Warning', 'test notice', 0, 1, '2026-11-15 09:37:45');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `alert_acknowledgements`
+--
+
+CREATE TABLE `alert_acknowledgements` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `alert_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `acknowledged_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `alert_acknowledgements`
+--
+
+INSERT INTO `alert_acknowledgements` (`id`, `alert_id`, `user_id`, `acknowledged_at`) VALUES
+(1, 2, 2, '2026-11-08 15:59:01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `audit_logs`
+--
+
+CREATE TABLE `audit_logs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `action` varchar(100) NOT NULL,
+  `details` text DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `audit_logs`
+--
+
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `details`, `ip_address`, `created_at`) VALUES
+(1, 1, 'login', 'Successful sign in', '::1', '2026-11-08 14:46:12'),
+(2, 1, 'sync_ffd', 'FFD sync complete: 6 gauge summary records saved.', '::1', '2026-11-08 15:02:04'),
+(3, 1, 'set_flood_thresholds', 'Location 8', '::1', '2026-11-08 15:03:01'),
+(4, 1, 'sync_ffd', 'FFD sync complete: 6 gauge summary records saved.', '::1', '2026-11-08 15:03:35'),
+(5, 2, 'login', 'Successful sign in', '::1', '2026-11-08 15:05:08'),
+(6, 2, 'report_incident', 'Location 3', '::1', '2026-11-08 15:06:16'),
+(7, 2, 'record_observation', 'Location 3', '::1', '2026-11-08 15:06:38'),
+(8, 2, 'record_observation', 'Location 3', '::1', '2026-11-08 15:16:01'),
+(9, 1, 'login', 'Successful sign in', '::1', '2026-11-08 15:56:28'),
+(10, 1, 'publish_alert', 'Monsoon Advisory Test', '::1', '2026-11-08 15:56:28'),
+(11, 2, 'acknowledge_alert', 'Alert 2', '::1', '2026-11-08 15:59:01'),
+(12, 2, 'acknowledge_alert', 'Alert 2', '::1', '2026-11-08 15:59:12'),
+(13, 1, 'login', 'Successful sign in', '::1', '2026-11-08 16:02:57'),
+(14, 2, 'login', 'Successful sign in', '::1', '2026-11-08 16:02:57'),
+(15, 1, 'login', 'Successful sign in', '::1', '2026-11-08 16:15:02'),
+(16, 2, 'login', 'Successful sign in', '::1', '2026-11-08 16:15:03'),
+(17, 1, 'login', 'Successful sign in', '::1', '2026-11-08 16:24:50'),
+(18, 1, 'sync_ffd', 'FFD sync complete: 6 gauge summary records saved.', '::1', '2026-11-08 16:56:16'),
+(19, 2, 'login', 'Successful sign in', '::1', '2026-11-15 09:29:49'),
+(20, 2, 'acknowledge_alert', 'Alert 2', '::1', '2026-11-15 09:30:00'),
+(21, 2, 'report_incident', 'Location 3', '::1', '2026-11-15 09:30:29'),
+(22, 2, 'record_observation', 'Location 1', '::1', '2026-11-15 09:32:13'),
+(23, 1, 'login', 'Successful sign in', '::1', '2026-11-15 09:35:43'),
+(24, 1, 'create_operator', 'test@gmail.com', '::1', '2026-11-15 09:36:59'),
+(25, 1, 'assign_location', 'User 3 / location 4', '::1', '2026-11-15 09:37:16'),
+(26, 1, 'publish_alert', 'test notice', '::1', '2026-11-15 09:37:45'),
+(27, 1, 'create_location', 'Karachi – Sea View, Clifton, Karachi, Pakistan', '::1', '2026-11-15 09:43:05'),
+(28, 1, 'set_flood_thresholds', 'Location 21', '::1', '2026-11-15 09:44:29'),
+(29, 1, 'remove_alert', 'Alert 3', '::1', '2026-11-15 09:53:59'),
+(30, 2, 'login', 'Successful sign in', '::1', '2026-11-15 09:55:15'),
+(31, 3, 'login', 'Successful sign in', '::1', '2026-11-15 09:57:28'),
+(32, 3, 'record_observation', 'Location 4', '::1', '2026-11-15 09:57:58'),
+(33, 3, 'record_observation', 'Location 4', '::1', '2026-11-15 10:11:28'),
+(34, 3, 'record_observation', 'Location 4', '::1', '2026-11-15 10:11:41'),
+(35, 3, 'login', 'Successful sign in', '::1', '2026-11-15 11:07:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `data_sync_runs`
+--
+
+CREATE TABLE `data_sync_runs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `source` varchar(80) NOT NULL,
+  `status` enum('success','partial','failed') NOT NULL,
+  `records_fetched` int(11) NOT NULL DEFAULT 0,
+  `message` text DEFAULT NULL,
+  `started_at` datetime NOT NULL,
+  `finished_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `data_sync_runs`
+--
+
+INSERT INTO `data_sync_runs` (`id`, `source`, `status`, `records_fetched`, `message`, `started_at`, `finished_at`) VALUES
+(1, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 15:44:14', '2026-11-08 15:44:16'),
+(2, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 16:02:02', '2026-11-08 16:02:04'),
+(3, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 16:03:34', '2026-11-08 16:03:35'),
+(4, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 16:23:08', '2026-11-08 16:23:09'),
+(5, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 16:43:50', '2026-11-08 16:43:50'),
+(6, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 17:16:06', '2026-11-08 17:16:08'),
+(7, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 17:45:18', '2026-11-08 17:45:19'),
+(8, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-08 17:56:14', '2026-11-08 17:56:16'),
+(9, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 09:36:12', '2026-11-15 09:36:13'),
+(10, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 09:51:16', '2026-11-15 09:51:18'),
+(11, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 10:20:09', '2026-11-15 10:20:11'),
+(12, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 10:37:47', '2026-11-15 10:37:48'),
+(13, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 10:54:09', '2026-11-15 10:54:12'),
+(14, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 11:10:56', '2026-11-15 11:10:59'),
+(15, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 11:26:46', '2026-11-15 11:26:48'),
+(16, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 12:05:49', '2026-11-15 12:05:50'),
+(17, 'FFD', 'success', 6, 'Fetched official FFD homepage summary. Gauge values are discharge in cusecs; FFD homepage summary does not provide measured water height in metres.', '2026-11-15 12:05:49', '2026-11-15 12:05:50');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `external_gauge_observations`
+--
+
+CREATE TABLE `external_gauge_observations` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `source` varchar(80) NOT NULL,
+  `river_name` varchar(120) NOT NULL,
+  `station_name` varchar(180) NOT NULL,
+  `discharge_cusecs` decimal(16,2) DEFAULT NULL,
+  `water_level_m` decimal(10,3) DEFAULT NULL,
+  `flood_status` varchar(80) DEFAULT NULL,
+  `source_observed_at` datetime DEFAULT NULL,
+  `source_updated_label` varchar(80) DEFAULT NULL,
+  `fetched_at` datetime NOT NULL,
+  `raw_text` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `external_gauge_observations`
+--
+
+INSERT INTO `external_gauge_observations` (`id`, `source`, `river_name`, `station_name`, `discharge_cusecs`, `water_level_m`, `flood_status`, `source_observed_at`, `source_updated_label`, `fetched_at`, `raw_text`) VALUES
+(1, 'FFD', 'Indus', 'Tarbela Dam', 65000.00, NULL, 'Normal flow', '2026-11-08 06:00:00', '08-Nov-2026 06:00', '2026-11-08 17:56:16', 'Indus ???? at Tarbela Dam 65,000 cusecs Normal flow'),
+(2, 'FFD', 'Kabul', 'Nowshera', 8200.00, NULL, 'Normal flow', '2026-11-08 06:00:00', '08-Nov-2026 06:00', '2026-11-08 17:56:16', 'Kabul ???? at Nowshera 8,200 cusecs Normal flow'),
+(3, 'FFD', 'Jhelum', 'Mangla Dam', 33000.00, NULL, 'Normal flow', '2026-11-08 06:00:00', '08-Nov-2026 06:00', '2026-11-08 17:56:16', 'Jhelum ???? at Mangla Dam 33,000 cusecs Normal flow'),
+(4, 'FFD', 'Chenab', 'Marala', 2000.00, NULL, 'Normal flow', '2026-11-08 06:00:00', '08-Nov-2026 06:00', '2026-11-08 17:56:16', 'Chenab ???? at Marala 2,000 cusecs Normal flow'),
+(5, 'FFD', 'Ravi', 'Jassar', 828.00, NULL, 'Normal flow', '2026-11-08 06:00:00', '08-Nov-2026 06:00', '2026-11-08 17:56:16', 'Ravi ???? at Jassar 828 cusecs Normal flow'),
+(6, 'FFD', 'Sutlej', 'Sulemanki', 3075.00, NULL, 'Normal flow', '2026-11-08 06:00:00', '08-Nov-2026 06:00', '2026-11-08 17:56:16', 'Sutlej ???? at Sulemanki 3,075 cusecs Normal flow'),
+(49, 'FFD', 'Indus', 'Kala Bagh', 66246.00, NULL, 'Normal flow', '2026-11-15 06:00:00', '15-Nov-2026 06:00', '2026-11-15 12:05:50', 'Indus ???? at Kala Bagh 66,246 cusecs Normal flow'),
+(50, 'FFD', 'Kabul', 'Nowshera', 17100.00, NULL, 'Normal flow', '2026-11-15 06:00:00', '15-Nov-2026 06:00', '2026-11-15 12:05:50', 'Kabul ???? at Nowshera 17,100 cusecs Normal flow'),
+(51, 'FFD', 'Jhelum', 'Mangla Dam', 33000.00, NULL, 'Normal flow', '2026-11-15 06:00:00', '15-Nov-2026 06:00', '2026-11-15 12:05:50', 'Jhelum ???? at Mangla Dam 33,000 cusecs Normal flow'),
+(52, 'FFD', 'Chenab', 'Marala', 2713.00, NULL, 'Normal flow', '2026-11-15 06:00:00', '15-Nov-2026 06:00', '2026-11-15 12:05:50', 'Chenab ???? at Marala 2,713 cusecs Normal flow'),
+(53, 'FFD', 'Ravi', 'Jassar', 919.00, NULL, 'Normal flow', '2026-11-15 06:00:00', '15-Nov-2026 06:00', '2026-11-15 12:05:50', 'Ravi ???? at Jassar 919 cusecs Normal flow'),
+(54, 'FFD', 'Sutlej', 'Sulemanki', 1215.00, NULL, 'Normal flow', '2026-11-15 06:00:00', '15-Nov-2026 06:00', '2026-11-15 12:05:50', 'Sutlej ???? at Sulemanki 1,215 cusecs Normal flow');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `flood_forecasts`
+--
+
+CREATE TABLE `flood_forecasts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `latitude` decimal(10,7) NOT NULL,
+  `longitude` decimal(10,7) NOT NULL,
+  `forecast_date` date NOT NULL,
+  `discharge_m3s` decimal(16,3) DEFAULT NULL,
+  `baseline_p90_m3s` decimal(16,3) DEFAULT NULL,
+  `risk_score` decimal(7,3) DEFAULT NULL,
+  `risk_band` enum('Unavailable','Low','Moderate','High','Very High') NOT NULL,
+  `model_name` varchar(120) NOT NULL,
+  `method_note` text DEFAULT NULL,
+  `generated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `flood_forecasts`
+--
+
+INSERT INTO `flood_forecasts` (`id`, `location_id`, `latitude`, `longitude`, `forecast_date`, `discharge_m3s`, `baseline_p90_m3s`, `risk_score`, `risk_band`, `model_name`, `method_note`, `generated_at`) VALUES
+(1, NULL, 24.9041945, 67.2025046, '2026-11-08', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:44:30'),
+(2, NULL, 24.9041945, 67.2025046, '2026-11-09', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:44:30'),
+(3, NULL, 24.9041945, 67.2025046, '2026-11-10', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:44:30'),
+(4, NULL, 24.9041945, 67.2025046, '2026-11-11', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:44:30'),
+(5, NULL, 24.9041945, 67.2025046, '2026-11-12', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:44:30'),
+(6, NULL, 24.9041945, 67.2025046, '2026-11-13', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:44:30'),
+(7, NULL, 24.9041945, 67.2025046, '2026-11-14', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:44:30'),
+(8, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:45:26'),
+(9, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:45:26'),
+(10, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:45:26'),
+(11, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:45:26'),
+(12, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:45:26'),
+(13, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:45:26'),
+(14, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:45:26'),
+(15, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:46:37'),
+(16, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:46:37'),
+(17, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:46:37'),
+(18, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:46:37'),
+(19, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:46:37'),
+(20, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:46:37'),
+(21, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 15:46:37'),
+(22, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:03:50'),
+(23, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:03:50'),
+(24, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:03:50'),
+(25, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:03:50'),
+(26, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:03:50'),
+(27, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:03:50'),
+(28, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:03:50'),
+(29, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:04:34'),
+(30, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:04:34'),
+(31, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:04:34'),
+(32, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:04:34'),
+(33, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:04:34'),
+(34, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:04:34'),
+(35, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:04:34'),
+(36, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:23:10'),
+(37, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:23:10'),
+(38, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:23:10'),
+(39, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:23:10'),
+(40, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:23:10'),
+(41, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:23:10'),
+(42, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:23:10'),
+(43, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:26'),
+(44, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:26'),
+(45, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:26'),
+(46, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:26'),
+(47, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:26'),
+(48, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:26'),
+(49, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:26'),
+(50, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:33'),
+(51, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:33'),
+(52, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:33'),
+(53, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:33'),
+(54, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:33'),
+(55, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:33'),
+(56, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:33'),
+(57, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:54'),
+(58, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:54'),
+(59, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:54'),
+(60, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:54'),
+(61, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:54'),
+(62, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:54'),
+(63, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:26:54'),
+(64, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:23'),
+(65, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:23'),
+(66, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:23'),
+(67, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:23'),
+(68, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:23'),
+(69, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:23'),
+(70, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:23'),
+(71, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:38'),
+(72, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:38'),
+(73, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:38'),
+(74, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:38'),
+(75, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:38'),
+(76, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:38'),
+(77, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:38'),
+(78, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:43'),
+(79, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:43'),
+(80, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:43'),
+(81, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:43'),
+(82, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:43'),
+(83, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:43'),
+(84, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:43'),
+(85, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:47'),
+(86, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:47'),
+(87, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:47'),
+(88, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:47'),
+(89, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:47'),
+(90, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:47'),
+(91, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:47'),
+(92, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:53'),
+(93, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:53'),
+(94, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:53'),
+(95, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:53'),
+(96, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:53'),
+(97, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:53'),
+(98, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:27:53'),
+(99, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:05'),
+(100, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:05'),
+(101, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:05'),
+(102, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:05'),
+(103, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:05'),
+(104, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:05'),
+(105, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:05'),
+(106, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:24'),
+(107, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:24'),
+(108, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:24'),
+(109, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:24'),
+(110, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:24'),
+(111, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:24'),
+(112, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:24'),
+(113, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:52'),
+(114, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:52'),
+(115, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:52'),
+(116, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:52'),
+(117, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:52'),
+(118, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:52'),
+(119, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:52'),
+(120, NULL, 24.9041946, 67.2025024, '2026-11-08', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:59'),
+(121, NULL, 24.9041946, 67.2025024, '2026-11-09', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:59'),
+(122, NULL, 24.9041946, 67.2025024, '2026-11-10', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:59'),
+(123, NULL, 24.9041946, 67.2025024, '2026-11-11', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:59'),
+(124, NULL, 24.9041946, 67.2025024, '2026-11-12', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:59'),
+(125, NULL, 24.9041946, 67.2025024, '2026-11-13', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:59'),
+(126, NULL, 24.9041946, 67.2025024, '2026-11-14', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:28:59'),
+(127, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:48:40'),
+(128, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:48:40'),
+(129, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:48:40'),
+(130, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:48:40'),
+(131, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:48:40'),
+(132, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:48:40'),
+(133, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:48:40'),
+(134, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:57:44'),
+(135, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:57:44'),
+(136, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:57:44'),
+(137, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:57:44'),
+(138, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:57:44'),
+(139, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:57:44'),
+(140, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:57:44'),
+(141, NULL, 24.9041934, 67.2025084, '2026-11-08', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:24'),
+(142, NULL, 24.9041934, 67.2025084, '2026-11-09', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:24'),
+(143, NULL, 24.9041934, 67.2025084, '2026-11-10', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:24'),
+(144, NULL, 24.9041934, 67.2025084, '2026-11-11', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:24'),
+(145, NULL, 24.9041934, 67.2025084, '2026-11-12', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:24'),
+(146, NULL, 24.9041934, 67.2025084, '2026-11-13', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:24'),
+(147, NULL, 24.9041934, 67.2025084, '2026-11-14', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:24'),
+(148, NULL, 24.9041934, 67.2025084, '2026-11-08', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:26'),
+(149, NULL, 24.9041934, 67.2025084, '2026-11-09', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:26'),
+(150, NULL, 24.9041934, 67.2025084, '2026-11-10', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:26'),
+(151, NULL, 24.9041934, 67.2025084, '2026-11-11', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:26'),
+(152, NULL, 24.9041934, 67.2025084, '2026-11-12', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:26'),
+(153, NULL, 24.9041934, 67.2025084, '2026-11-13', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:26'),
+(154, NULL, 24.9041934, 67.2025084, '2026-11-14', 0.010, 0.020, 25.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:26'),
+(155, NULL, 24.8546842, 67.0207055, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:34'),
+(156, NULL, 24.8546842, 67.0207055, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:34'),
+(157, NULL, 24.8546842, 67.0207055, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:34'),
+(158, NULL, 24.8546842, 67.0207055, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:34'),
+(159, NULL, 24.8546842, 67.0207055, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:34'),
+(160, NULL, 24.8546842, 67.0207055, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:34'),
+(161, NULL, 24.8546842, 67.0207055, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:34'),
+(162, NULL, 31.5656822, 74.3141829, '2026-11-08', 1.140, 3.520, 16.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:46'),
+(163, NULL, 31.5656822, 74.3141829, '2026-11-09', 1.130, 3.520, 16.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:46'),
+(164, NULL, 31.5656822, 74.3141829, '2026-11-10', 1.130, 3.520, 16.100, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:46'),
+(165, NULL, 31.5656822, 74.3141829, '2026-11-11', 1.130, 3.520, 16.100, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:46'),
+(166, NULL, 31.5656822, 74.3141829, '2026-11-12', 1.130, 3.520, 16.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:46'),
+(167, NULL, 31.5656822, 74.3141829, '2026-11-13', 1.130, 3.520, 19.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:46'),
+(168, NULL, 31.5656822, 74.3141829, '2026-11-14', 1.130, 3.520, 31.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 16:58:46'),
+(169, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:10'),
+(170, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:10'),
+(171, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:10'),
+(172, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:10'),
+(173, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:10'),
+(174, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:10'),
+(175, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:10'),
+(176, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:39'),
+(177, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:39'),
+(178, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:39'),
+(179, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:39'),
+(180, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:39'),
+(181, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:39'),
+(182, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:16:39'),
+(183, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:23:12'),
+(184, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:23:12'),
+(185, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:23:12'),
+(186, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:23:12'),
+(187, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:23:12'),
+(188, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:23:12'),
+(189, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:23:12'),
+(190, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:24:07'),
+(191, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:24:07'),
+(192, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:24:07');
+INSERT INTO `flood_forecasts` (`id`, `location_id`, `latitude`, `longitude`, `forecast_date`, `discharge_m3s`, `baseline_p90_m3s`, `risk_score`, `risk_band`, `model_name`, `method_note`, `generated_at`) VALUES
+(193, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:24:07'),
+(194, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:24:07'),
+(195, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:24:07'),
+(196, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:24:07'),
+(197, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:13'),
+(198, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:13'),
+(199, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:13'),
+(200, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:13'),
+(201, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:13'),
+(202, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:13'),
+(203, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:13'),
+(204, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:16'),
+(205, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:16'),
+(206, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:16'),
+(207, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:16'),
+(208, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:16'),
+(209, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:16'),
+(210, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:16'),
+(211, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:20'),
+(212, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:20'),
+(213, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:20'),
+(214, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:20'),
+(215, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:20'),
+(216, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:20'),
+(217, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:20'),
+(218, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:26'),
+(219, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:26'),
+(220, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:26'),
+(221, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:26'),
+(222, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:26'),
+(223, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:26'),
+(224, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:26'),
+(225, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:28'),
+(226, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:28'),
+(227, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:28'),
+(228, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:28'),
+(229, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:28'),
+(230, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:28'),
+(231, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:28'),
+(232, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:30'),
+(233, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:30'),
+(234, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:30'),
+(235, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:30'),
+(236, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:30'),
+(237, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:30'),
+(238, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:30'),
+(239, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:35'),
+(240, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:35'),
+(241, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:35'),
+(242, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:35'),
+(243, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:35'),
+(244, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:35'),
+(245, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:29:35'),
+(246, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:05'),
+(247, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:05'),
+(248, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:05'),
+(249, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:05'),
+(250, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:05'),
+(251, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:05'),
+(252, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:05'),
+(253, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:19'),
+(254, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:19'),
+(255, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:19'),
+(256, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:19'),
+(257, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:19'),
+(258, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:19'),
+(259, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:30:19'),
+(260, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:34'),
+(261, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:34'),
+(262, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:34'),
+(263, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:34'),
+(264, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:34'),
+(265, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:34'),
+(266, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:34'),
+(267, NULL, 24.8607000, 67.0011000, '2026-11-08', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:48'),
+(268, NULL, 24.8607000, 67.0011000, '2026-11-09', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:48'),
+(269, NULL, 24.8607000, 67.0011000, '2026-11-10', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:48'),
+(270, NULL, 24.8607000, 67.0011000, '2026-11-11', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:48'),
+(271, NULL, 24.8607000, 67.0011000, '2026-11-12', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:48'),
+(272, NULL, 24.8607000, 67.0011000, '2026-11-13', 0.790, 0.970, 40.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:48'),
+(273, NULL, 24.8607000, 67.0011000, '2026-11-14', 0.790, 0.970, 61.900, 'High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:48'),
+(274, NULL, 32.9247256, 73.7193880, '2026-11-08', 343.350, 983.010, 17.500, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:58'),
+(275, NULL, 32.9247256, 73.7193880, '2026-11-09', 338.630, 983.010, 17.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:58'),
+(276, NULL, 32.9247256, 73.7193880, '2026-11-10', 333.970, 983.010, 17.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:58'),
+(277, NULL, 32.9247256, 73.7193880, '2026-11-11', 329.370, 983.010, 16.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:58'),
+(278, NULL, 32.9247256, 73.7193880, '2026-11-12', 325.590, 983.010, 16.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:58'),
+(279, NULL, 32.9247256, 73.7193880, '2026-11-13', 321.850, 983.010, 16.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:58'),
+(280, NULL, 32.9247256, 73.7193880, '2026-11-14', 319.630, 983.010, 17.100, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-08 17:56:58'),
+(281, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:36:14'),
+(282, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:36:14'),
+(283, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:36:14'),
+(284, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:36:14'),
+(285, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:36:14'),
+(286, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:36:14'),
+(287, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:36:14'),
+(288, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:38'),
+(289, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:38'),
+(290, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:38'),
+(291, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:38'),
+(292, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:38'),
+(293, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:38'),
+(294, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:38'),
+(295, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:47'),
+(296, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:47'),
+(297, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:47'),
+(298, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:47'),
+(299, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:47'),
+(300, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:47'),
+(301, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:57:47'),
+(302, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:39'),
+(303, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:39'),
+(304, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:39'),
+(305, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:39'),
+(306, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:39'),
+(307, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:39'),
+(308, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:39'),
+(309, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:47'),
+(310, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:47'),
+(311, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:47'),
+(312, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:47'),
+(313, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:47'),
+(314, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:47'),
+(315, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 09:58:47'),
+(316, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:01:18'),
+(317, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:01:18'),
+(318, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:01:18'),
+(319, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:01:18'),
+(320, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:01:18'),
+(321, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:01:18'),
+(322, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:01:18'),
+(323, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:06'),
+(324, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:06'),
+(325, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:06'),
+(326, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:06'),
+(327, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:06'),
+(328, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:06'),
+(329, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:06'),
+(330, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:09'),
+(331, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:09'),
+(332, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:09'),
+(333, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:09'),
+(334, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:09'),
+(335, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:09'),
+(336, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:05:09'),
+(337, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:28'),
+(338, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:28'),
+(339, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:28'),
+(340, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:28'),
+(341, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:28'),
+(342, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:28'),
+(343, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:28'),
+(344, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:32'),
+(345, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:32'),
+(346, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:32'),
+(347, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:32'),
+(348, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:32'),
+(349, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:32'),
+(350, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:32'),
+(351, NULL, 24.9041937, 67.2025088, '2026-11-15', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:48'),
+(352, NULL, 24.9041937, 67.2025088, '2026-11-16', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:48'),
+(353, NULL, 24.9041937, 67.2025088, '2026-11-17', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:48'),
+(354, NULL, 24.9041937, 67.2025088, '2026-11-18', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:48'),
+(355, NULL, 24.9041937, 67.2025088, '2026-11-19', 0.010, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:48'),
+(356, NULL, 24.9041937, 67.2025088, '2026-11-20', 0.010, 0.020, 50.000, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:48'),
+(357, NULL, 24.9041937, 67.2025088, '2026-11-21', 0.010, 0.020, 50.000, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:27:48'),
+(358, NULL, 34.0123846, 71.5787458, '2026-11-15', 34.810, 79.350, 21.900, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:28:05'),
+(359, NULL, 34.0123846, 71.5787458, '2026-11-16', 33.990, 79.350, 21.500, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:28:05'),
+(360, NULL, 34.0123846, 71.5787458, '2026-11-17', 33.040, 79.350, 21.000, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:28:05'),
+(361, NULL, 34.0123846, 71.5787458, '2026-11-18', 31.960, 79.350, 20.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:28:05'),
+(362, NULL, 34.0123846, 71.5787458, '2026-11-19', 30.990, 79.350, 19.700, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:28:05'),
+(363, NULL, 34.0123846, 71.5787458, '2026-11-20', 30.050, 79.350, 19.100, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:28:05'),
+(364, NULL, 34.0123846, 71.5787458, '2026-11-21', 29.200, 79.350, 18.500, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:28:05'),
+(365, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:30:43'),
+(366, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:30:43'),
+(367, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:30:43'),
+(368, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:30:43'),
+(369, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:30:43'),
+(370, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:30:43'),
+(371, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:30:43'),
+(372, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:32:18'),
+(373, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:32:18'),
+(374, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:32:18'),
+(375, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:32:18'),
+(376, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:32:18'),
+(377, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:32:18'),
+(378, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:32:18'),
+(379, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:33:58'),
+(380, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:33:58'),
+(381, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:33:58'),
+(382, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:33:58'),
+(383, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:33:58');
+INSERT INTO `flood_forecasts` (`id`, `location_id`, `latitude`, `longitude`, `forecast_date`, `discharge_m3s`, `baseline_p90_m3s`, `risk_score`, `risk_band`, `model_name`, `method_note`, `generated_at`) VALUES
+(384, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:33:58'),
+(385, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:33:58'),
+(386, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:37:50'),
+(387, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:37:50'),
+(388, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:37:50'),
+(389, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:37:50'),
+(390, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:37:50'),
+(391, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:37:50'),
+(392, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:37:50'),
+(393, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:43:53'),
+(394, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:43:53'),
+(395, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:43:53'),
+(396, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:43:53'),
+(397, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:43:53'),
+(398, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:43:53'),
+(399, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:43:53'),
+(400, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:34'),
+(401, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:34'),
+(402, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:34'),
+(403, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:34'),
+(404, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:34'),
+(405, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:34'),
+(406, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:34'),
+(407, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:40'),
+(408, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:40'),
+(409, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:40'),
+(410, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:40'),
+(411, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:41'),
+(412, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:41'),
+(413, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:44:41'),
+(414, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:28'),
+(415, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:28'),
+(416, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:28'),
+(417, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:28'),
+(418, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:28'),
+(419, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:28'),
+(420, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:28'),
+(421, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:38'),
+(422, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:38'),
+(423, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:38'),
+(424, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:38'),
+(425, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:38'),
+(426, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:38'),
+(427, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:45:38'),
+(428, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:54:13'),
+(429, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:54:13'),
+(430, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:54:13'),
+(431, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:54:13'),
+(432, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:54:13'),
+(433, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:54:13'),
+(434, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:54:13'),
+(435, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:55:11'),
+(436, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:55:11'),
+(437, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:55:11'),
+(438, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:55:11'),
+(439, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:55:11'),
+(440, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:55:11'),
+(441, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:55:11'),
+(442, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:57:17'),
+(443, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:57:17'),
+(444, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:57:17'),
+(445, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:57:17'),
+(446, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:57:17'),
+(447, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:57:17'),
+(448, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:57:17'),
+(449, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:58:03'),
+(450, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:58:03'),
+(451, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:58:03'),
+(452, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:58:03'),
+(453, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:58:03'),
+(454, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:58:04'),
+(455, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 10:58:04'),
+(456, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:07:05'),
+(457, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:07:05'),
+(458, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:07:05'),
+(459, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:07:05'),
+(460, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:07:05'),
+(461, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:07:05'),
+(462, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:07:05'),
+(463, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:10:59'),
+(464, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:10:59'),
+(465, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:10:59'),
+(466, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:10:59'),
+(467, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:10:59'),
+(468, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:10:59'),
+(469, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:10:59'),
+(470, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:11:45'),
+(471, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:11:45'),
+(472, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:11:45'),
+(473, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:11:45'),
+(474, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:11:45'),
+(475, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:11:45'),
+(476, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 11:11:45'),
+(477, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:49'),
+(478, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:49'),
+(479, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:49'),
+(480, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:49'),
+(481, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:49'),
+(482, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:49'),
+(483, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:49'),
+(484, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:52'),
+(485, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:52'),
+(486, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:52'),
+(487, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:52'),
+(488, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:52'),
+(489, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:52'),
+(490, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:05:52'),
+(491, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:23'),
+(492, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:23'),
+(493, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:23'),
+(494, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:23'),
+(495, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:23'),
+(496, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:23'),
+(497, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:23'),
+(498, NULL, 24.8607000, 67.0011000, '2026-11-15', 0.880, 0.970, 51.500, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:28'),
+(499, NULL, 24.8607000, 67.0011000, '2026-11-16', 0.850, 0.970, 46.900, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:28'),
+(500, NULL, 24.8607000, 67.0011000, '2026-11-17', 0.830, 0.970, 44.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:28'),
+(501, NULL, 24.8607000, 67.0011000, '2026-11-18', 0.820, 0.970, 43.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:28'),
+(502, NULL, 24.8607000, 67.0011000, '2026-11-19', 0.810, 0.970, 42.300, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:28'),
+(503, NULL, 24.8607000, 67.0011000, '2026-11-20', 0.800, 0.970, 41.800, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:28'),
+(504, NULL, 24.8607000, 67.0011000, '2026-11-21', 0.800, 0.970, 41.200, 'Low', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:28'),
+(505, NULL, 24.9043357, 67.2026690, '2026-11-15', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:30'),
+(506, NULL, 24.9043357, 67.2026690, '2026-11-16', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:30'),
+(507, NULL, 24.9043357, 67.2026690, '2026-11-17', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:30'),
+(508, NULL, 24.9043357, 67.2026690, '2026-11-18', 0.020, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:30'),
+(509, NULL, 24.9043357, 67.2026690, '2026-11-19', 0.010, 0.020, 100.000, 'Very High', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:30'),
+(510, NULL, 24.9043357, 67.2026690, '2026-11-20', 0.010, 0.020, 50.000, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:30'),
+(511, NULL, 24.9043357, 67.2026690, '2026-11-21', 0.010, 0.020, 50.000, 'Moderate', 'GloFAS v4 · ensemble anomaly', 'Heuristic comparison with the 92-day historical 90th percentile; this is not a trained AI/ML model or an official warning.', '2026-11-15 12:06:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `flood_map_layers`
+--
+
+CREATE TABLE `flood_map_layers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(180) NOT NULL,
+  `source` varchar(180) NOT NULL,
+  `geojson_file` varchar(255) NOT NULL,
+  `observed_at` datetime DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `uploaded_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `incident_reports`
+--
+
+CREATE TABLE `incident_reports` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(180) NOT NULL,
+  `description` text NOT NULL,
+  `severity` enum('Information','Watch','Warning','Critical') NOT NULL,
+  `status` enum('Open','Reviewing','Resolved') NOT NULL DEFAULT 'Open',
+  `reported_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `incident_reports`
+--
+
+INSERT INTO `incident_reports` (`id`, `location_id`, `title`, `description`, `severity`, `status`, `reported_by`, `created_at`) VALUES
+(1, 3, 'Disclaimer', 'Beware of thunder and flood storm', 'Information', 'Open', 2, '2026-11-08 15:06:16'),
+(2, 3, 'Test title', 'Test description', 'Warning', 'Open', 2, '2026-11-15 09:30:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `locations`
+--
+
+CREATE TABLE `locations` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(160) NOT NULL,
+  `area_type` enum('River','Canal','Catchment','Urban area') NOT NULL,
+  `latitude` decimal(10,7) DEFAULT NULL,
+  `longitude` decimal(10,7) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `warning_level_m` decimal(8,3) DEFAULT NULL,
+  `critical_level_m` decimal(8,3) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `locations`
+--
+
+INSERT INTO `locations` (`id`, `name`, `area_type`, `latitude`, `longitude`, `description`, `warning_level_m`, `critical_level_m`, `is_active`, `created_at`) VALUES
+(1, 'Indus River — Sukkur', 'River', 27.7052000, 68.8574000, 'Demonstration monitoring location; verify coordinates and gauge data.', NULL, NULL, 1, '2026-11-08 14:29:05'),
+(2, 'Indus River — Guddu', 'River', 28.4250000, 69.7130000, 'Demonstration monitoring location; verify coordinates and gauge data.', NULL, NULL, 1, '2026-11-08 14:29:05'),
+(3, 'Hub River', 'River', 25.1500000, 66.8500000, 'Demonstration monitoring location; verify coordinates and gauge data.', NULL, NULL, 1, '2026-11-08 14:29:05'),
+(4, 'Karachi Urban Catchment', 'Catchment', 24.8607000, 67.0011000, 'Urban demonstration location; not a flood boundary.', NULL, NULL, 1, '2026-11-08 14:29:05'),
+(15, 'Indus River — Tarbela Dam', '', 34.0886000, 72.6983000, 'Major storage reservoir and flood regulating structure on the Indus River.', 460.000, 472.000, 1, '2026-11-15 09:20:01'),
+(16, 'Jhelum River — Mangla Dam', '', 33.1432000, 73.6428000, 'Key flood routing dam on the Jhelum River basin.', 370.000, 380.000, 1, '2026-11-15 09:20:01'),
+(17, 'Chenab River — Marala Barrage', '', 32.6738000, 74.4674000, 'Headworks on River Chenab monitoring upstream flow from Jammu & Kashmir.', 8.200, 9.800, 1, '2026-11-15 09:20:01'),
+(18, 'Kabul River — Nowshera', 'River', 34.0153000, 71.9747000, 'Critical flood forecasting gauging point on Kabul River in Khyber Pakhtunkhwa.', 6.500, 7.800, 1, '2026-11-15 09:20:01'),
+(19, 'Ravi River — Jassar', 'River', 32.0500000, 74.9500000, 'Entry gauging station for River Ravi along the eastern border.', 5.000, 6.200, 1, '2026-11-15 09:20:01'),
+(20, 'Indus River — Kotri Barrage', '', 25.3719000, 68.3142000, 'Downstream Indus barrage regulating discharge to the Arabian Sea.', 6.800, 8.000, 1, '2026-11-15 09:20:01'),
+(21, 'Karachi – Sea View, Clifton, Karachi, Pakistan', 'Urban area', 24.8006000, 67.0304000, '', 10.000, 12.000, 1, '2026-11-15 09:43:05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `operator_assignments`
+--
+
+CREATE TABLE `operator_assignments` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `operator_assignments`
+--
+
+INSERT INTO `operator_assignments` (`id`, `user_id`, `location_id`, `created_at`) VALUES
+(1, 2, 1, '2026-11-08 14:29:05'),
+(2, 2, 3, '2026-11-08 14:29:05'),
+(3, 3, 4, '2026-11-15 09:37:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `email` varchar(190) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `role` enum('Admin','Area Operator') NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `password_hash`, `role`, `is_active`, `created_at`) VALUES
+(1, 'AquaTwin Administrator', 'admin@aquatwin.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 1, '2026-11-08 14:29:05'),
+(2, 'Demo Area Operator', 'operator@aquatwin.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Area Operator', 1, '2026-11-08 14:29:05'),
+(3, 'Test Operator', 'test@gmail.com', '$2y$10$eHE9jBtiiWZBv4rseEwDZ..lQJwqcYV3FlrlBJnIJZ9EkTzbmCCu.', 'Area Operator', 1, '2026-11-15 09:36:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `weather_observations`
+--
+
+CREATE TABLE `weather_observations` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED NOT NULL,
+  `observed_at` datetime NOT NULL,
+  `rainfall_mm` decimal(8,2) DEFAULT NULL,
+  `water_level_m` decimal(8,3) DEFAULT NULL,
+  `source` varchar(120) NOT NULL DEFAULT 'Operator entry',
+  `notes` text DEFAULT NULL,
+  `entered_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `weather_observations`
+--
+
+INSERT INTO `weather_observations` (`id`, `location_id`, `observed_at`, `rainfall_mm`, `water_level_m`, `source`, `notes`, `entered_by`, `created_at`) VALUES
+(1, 3, '2026-11-08 16:06:00', NULL, NULL, 'Operator entry', '', 2, '2026-11-08 15:06:38'),
+(2, 3, '2026-11-08 16:06:00', NULL, NULL, 'Operator entry', '', 2, '2026-11-08 15:16:01'),
+(3, 1, '2026-11-15 10:30:00', 10.00, 8.000, 'Operator entry', 'Demo data', 2, '2026-11-15 09:32:13'),
+(4, 4, '2026-11-15 10:57:00', 8.00, 7.000, 'Operator entry', '', 3, '2026-11-15 09:57:58'),
+(5, 4, '2026-11-15 10:57:00', 8.00, 7.000, 'Operator entry', '', 3, '2026-11-15 10:11:28'),
+(6, 4, '2026-11-15 11:11:00', 12.00, 77.000, 'Operator entry', '', 3, '2026-11-15 10:11:41');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `alerts`
+--
+ALTER TABLE `alerts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
+-- Indexes for table `alert_acknowledgements`
+--
+ALTER TABLE `alert_acknowledgements`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_ack` (`alert_id`,`user_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `data_sync_runs`
+--
+ALTER TABLE `data_sync_runs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_sync_source` (`source`,`started_at`);
+
+--
+-- Indexes for table `external_gauge_observations`
+--
+ALTER TABLE `external_gauge_observations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_external_gauge` (`source`,`station_name`,`source_updated_label`),
+  ADD KEY `idx_external_latest` (`source`,`fetched_at`);
+
+--
+-- Indexes for table `flood_forecasts`
+--
+ALTER TABLE `flood_forecasts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_forecast_location_date` (`location_id`,`forecast_date`);
+
+--
+-- Indexes for table `flood_map_layers`
+--
+ALTER TABLE `flood_map_layers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `uploaded_by` (`uploaded_by`);
+
+--
+-- Indexes for table `incident_reports`
+--
+ALTER TABLE `incident_reports`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `location_id` (`location_id`),
+  ADD KEY `reported_by` (`reported_by`);
+
+--
+-- Indexes for table `locations`
+--
+ALTER TABLE `locations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `operator_assignments`
+--
+ALTER TABLE `operator_assignments`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_assignment` (`user_id`,`location_id`),
+  ADD KEY `location_id` (`location_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `weather_observations`
+--
+ALTER TABLE `weather_observations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `location_id` (`location_id`),
+  ADD KEY `entered_by` (`entered_by`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `alerts`
+--
+ALTER TABLE `alerts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `alert_acknowledgements`
+--
+ALTER TABLE `alert_acknowledgements`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
+-- AUTO_INCREMENT for table `data_sync_runs`
+--
+ALTER TABLE `data_sync_runs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `external_gauge_observations`
+--
+ALTER TABLE `external_gauge_observations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+
+--
+-- AUTO_INCREMENT for table `flood_forecasts`
+--
+ALTER TABLE `flood_forecasts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=512;
+
+--
+-- AUTO_INCREMENT for table `flood_map_layers`
+--
+ALTER TABLE `flood_map_layers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `incident_reports`
+--
+ALTER TABLE `incident_reports`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `locations`
+--
+ALTER TABLE `locations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `operator_assignments`
+--
+ALTER TABLE `operator_assignments`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `weather_observations`
+--
+ALTER TABLE `weather_observations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `alerts`
+--
+ALTER TABLE `alerts`
+  ADD CONSTRAINT `alerts_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `alert_acknowledgements`
+--
+ALTER TABLE `alert_acknowledgements`
+  ADD CONSTRAINT `alert_acknowledgements_ibfk_1` FOREIGN KEY (`alert_id`) REFERENCES `alerts` (`id`),
+  ADD CONSTRAINT `alert_acknowledgements_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD CONSTRAINT `audit_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `flood_forecasts`
+--
+ALTER TABLE `flood_forecasts`
+  ADD CONSTRAINT `flood_forecasts_ibfk_1` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `flood_map_layers`
+--
+ALTER TABLE `flood_map_layers`
+  ADD CONSTRAINT `flood_map_layers_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `incident_reports`
+--
+ALTER TABLE `incident_reports`
+  ADD CONSTRAINT `incident_reports_ibfk_1` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
+  ADD CONSTRAINT `incident_reports_ibfk_2` FOREIGN KEY (`reported_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `operator_assignments`
+--
+ALTER TABLE `operator_assignments`
+  ADD CONSTRAINT `operator_assignments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `operator_assignments_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`);
+
+--
+-- Constraints for table `weather_observations`
+--
+ALTER TABLE `weather_observations`
+  ADD CONSTRAINT `weather_observations_ibfk_1` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
+  ADD CONSTRAINT `weather_observations_ibfk_2` FOREIGN KEY (`entered_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

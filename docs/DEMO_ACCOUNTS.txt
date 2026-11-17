@@ -1,0 +1,19 @@
+AquaTwin local demo accounts
+============================
+
+ADMIN DASHBOARD
+Email: admin@aquatwin.local
+Password: password
+URL: http://localhost/AquaTwin/public/login.php
+
+AREA OPERATOR DASHBOARD
+Email: operator@aquatwin.local
+Password: password
+URL: http://localhost/AquaTwin/public/login.php
+
+The demo Area Operator is assigned to:
+- Indus River — Sukkur
+- Hub River
+
+Import database/twin_db.sql to create both accounts and assignments.
+Change demo passwords before any shared/public deployment.
